@@ -24,3 +24,26 @@ In addition, you can ask True/False questions. Such as
 
 In this case, `False` is returned.  
 You have to add `?` at last.
+
+
+##Not yet
+#### AND/OR search
+
+    S.Jobs,is-a,Apple's Founder OR S.Jobs,is-a,MicroSoft's Founder
+
+This returns `True`.
+
+    S.Jobs,is-a,Apple's Founder AND S.Jobs,is-a,MicroSoft's Founder
+
+This returns `False`.
+
+
+#### Deep search
+When [A]--[is-a]--[B] and [B]--[is-a]--[C],
+
+    A,is-a,C?
+
+This returns `True`.
+
+    A,is-a,?x
+This returns `B AND C`.
