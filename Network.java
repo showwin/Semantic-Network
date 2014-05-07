@@ -1,68 +1,145 @@
+
 import java.io.*;
 import java.util.*;
 
 public class Network{
 	List<Link> network = new ArrayList<Link>();
+	List<String> results = new ArrayList<String>();
 	
 	public void start() throws IOException {
 		while(true){
 			//コマンド入力
+			System.out.println("");
 			BufferedReader r = new BufferedReader(new InputStreamReader(System.in), 1);
 			String s = r.readLine();
 			String[] sAry = s.split(",");
 			//コマンド処理
-			if("end".equals(sAry[0])) break;
-			if("show".equals(sAry[0])) showLink();
-			if("setInit".equals(sAry[0])) setInit();
-			if(sAry.length == 3){
-				if(sAry[2].endsWith("?")){
-					tfCheck(sAry[0], sAry[1], sAry[2].substring(0,sAry[2].length()-1));
-				}else if("?x".equals(sAry[0])){
-					sSearch(sAry[1], sAry[2]);
-				}else if("?x".equals(sAry[2])){
-					oSearch(sAry[0], sAry[1]);
-				}else{
-					Link l = new Link(sAry[0], sAry[1], sAry[2]);
-					network.add(l);
+			if(sAry.length==1){
+				if("end".equals(sAry[0])) break;
+				shortcut(sAry[0]);
+				continue;
+			}
+			if(sAry.length>=3){
+				results = proc(sAry[0],sAry[1],sAry[2]);
+				for(int i=1; i<(sAry.length+1)/4; i++){
+					nextSearch(sAry[4*i-1], sAry[4*i], sAry[4*i+1], sAry[4*i+2]);
 				}
 			}
+			showResults();
 		}
 	}
 	
-	//主語検索
-	public void sSearch(String r, String o){
-		List<String> results;
-		for(Link link : network){
-			if(r.equals(link.getRelationship()) && o.equals(link.getObject())) results.add(link.getString());
-		}
-		return results;
+	//ショートカットコマンド
+	public void shortcut(String command){
+		if("show".equals(command)) showLink();
+		if("setInit".equals(command)) setInit();
 	}
 	
-	//述語検索
-	public void oSearch(String s, String r){
-		
+	//2つめ以降のクエリ
+	public void nextSearch(String cond, String s, String r, String o){
+		if("AND".equals(cond) || "and".equals("cond")){
+			andSearch(s, r, o);
+		}else if("OR".equals(cond) || "or".equals(cond)){
+			orSearch(s, r, o);
+		}
 	}
 	
 	//and検索
-	public void andSearch(){
-		
+	public void andSearch(String s, String r, String o){
+		List<String> answers = new ArrayList<String>();
+		List<String> temp = new ArrayList<String>();
+		answers = proc(s,r,o);
+		for(String result : results){
+			for(String answer : answers){
+				if(result.equals(answer)) temp.add(answer);
+			}
+		}
+		results = temp;
 	}
 	
 	//or検索
-	public void orSearch(){
+	public void orSearch(String s, String r, String o){
+		List<String> answers = new ArrayList<String>();
+		answers = proc(s,r,o);
+		for(String answer : answers){
+			results.add(answer);
+		}
 		
 	}
 	
+	//コマンドによる仕事の割り当て
+	public List<String> proc(String s, String r, String o){
+		if(o.endsWith("?")){
+			return tfCheck(s, r, o.substring(0, o.length()-1));
+		}else if("?x".equals(s)){
+			return sSearch(r, o);
+		}else if("?x".equals(o)){
+			return oSearch(s, r);
+		}else{
+			return makeLink(s, r, o);
+		}
+	}
+	
+	//リンク作成
+	public List<String> makeLink(String s, String r, String o){
+		List<String> message = new ArrayList<String>();
+		Link l = new Link(s, r, o);
+		network.add(l);
+		message.add("Success!");
+		return message;
+	}
+	
+	
+	//主語検索
+	public List<String> sSearch(String r, String o){
+		List<String> answers = new ArrayList<String>();
+		for(Link link : network){
+			if(r.equals(link.getRelationship()) && o.equals(link.getObject())) answers.add(link.getSubject());
+		}
+		return answers;
+	}
+	
+	//述語検索
+	public List<String> oSearch(String s, String r){
+		List<String> answers = new ArrayList<String>();
+		for(Link link : network){
+			if(s.equals(link.getSubject()) && r.equals(link.getRelationship())) answers.add(link.getObject());
+		}
+		return answers;
+	}
+	
 	//真偽チェック
-	public void tfCheck(String s, String r, String o){
+	public List<String> tfCheck(String s, String r, String o){
+		List<String> answers = new ArrayList<String>();
 		boolean flg = false;
 		for(Link link : network){
 			if(s.equals(link.getSubject()) && r.equals(link.getRelationship()) && o.equals(link.getObject())) flg = true;
 		}
 		if(flg){
-			System.out.println("TRUE");
+			answers.add("True");
 		}else{
-			System.out.println("FALSE");
+			answers.add("False");
+		}
+		return answers;
+	}
+	
+	//結果の表示
+	public void showResults(){
+		// 真偽チェックでOR検索した場合
+		if(results.size()>=2 && ("False".equals(results.get(0)) || "True".equals(results.get(0)))){
+			String flg = "False";
+			for(String result : results){
+				if ("True".equals(result)) flg = "True";
+			}
+			System.out.println(flg);
+		}else if(results.size()==0){
+			System.out.println("False");
+		}else{
+			String result = "";
+			for(String r : results){
+				result += " AND "+r;
+			}
+			System.out.println(result.substring(5,result.length()));
 		}
 	}
 	
