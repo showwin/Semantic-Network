@@ -36,7 +36,7 @@ This returns `True`.
 
 This returns `False`.
 
-## Not yet
+
 #### Deep search
 When [A]--[is-a]--[B] and [B]--[is-a]--[C],
 

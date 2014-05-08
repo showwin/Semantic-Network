@@ -93,8 +93,15 @@ public class Network{
 	//主語検索
 	public List<String> sSearch(String r, String o){
 		List<String> answers = new ArrayList<String>();
+		List<String> deepAnswers = new ArrayList<String>();
 		for(Link link : network){
 			if(r.equals(link.getRelationship()) && o.equals(link.getObject())) answers.add(link.getSubject());
+		}
+		for(String answer : answers){
+			deepAnswers = sSearch(r, answer);	
+		}
+		for(String dAns : deepAnswers){
+			answers.add(dAns);
 		}
 		return answers;
 	}
@@ -102,8 +109,15 @@ public class Network{
 	//述語検索
 	public List<String> oSearch(String s, String r){
 		List<String> answers = new ArrayList<String>();
+		List<String> deepAnswers = new ArrayList<String>();
 		for(Link link : network){
 			if(s.equals(link.getSubject()) && r.equals(link.getRelationship())) answers.add(link.getObject());
+		}
+		for(String answer : answers){
+			deepAnswers = oSearch(answer, r);
+		}
+		for(String dAns : deepAnswers){
+			answers.add(dAns);
 		}
 		return answers;
 	}
@@ -112,8 +126,9 @@ public class Network{
 	public List<String> tfCheck(String s, String r, String o){
 		List<String> answers = new ArrayList<String>();
 		boolean flg = false;
-		for(Link link : network){
-			if(s.equals(link.getSubject()) && r.equals(link.getRelationship()) && o.equals(link.getObject())) flg = true;
+		List<String> candidates = oSearch(s, r);
+		for(String c : candidates){
+			if(c.equals(o)) flg = true;
 		}
 		if(flg){
 			answers.add("True");
@@ -156,6 +171,8 @@ public class Network{
 		l = new Link("S.Jobs", "likes", "The Beatles");
 		network.add(l);
 		l = new Link("S.Jobs", "is-a", "Apple's Founder");
+		network.add(l);
+		l = new Link("Apple's Founder", "is-a", "Genius");
 		network.add(l);
 		l = new Link("S.Wozniak", "is-a", "Apple's Founder");
 		network.add(l);
