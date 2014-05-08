@@ -1,4 +1,4 @@
-package semantic_network;
+package jp.ac.kyoto_u.i.soc.ai.sito.b4training.ex1.semantic_network;
 
 public class Node {
 	String node;

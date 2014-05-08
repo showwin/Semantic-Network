@@ -1,4 +1,4 @@
-package semantic_network;
+package jp.ac.kyoto_u.i.soc.ai.sito.b4training.ex1.semantic_network;
 
 import java.io.*;
 import java.util.*;
@@ -13,7 +13,7 @@ public class Network {
 			System.out.println("");
 			BufferedReader r = new BufferedReader(new InputStreamReader(
 					System.in), 1);
-			String[] sAry = r.readLine().split(",");
+			String[] sAry = r.readLine().split(" ");
 			// コマンド処理
 			if (sAry.length == 1) {
 				if ("end".equals(sAry[0]))
@@ -29,6 +29,50 @@ public class Network {
 				}
 			}
 			showResults();
+		}
+	}
+	
+	// JUnit用インターフェイス
+	public String ask(String query){
+		// コマンド入力
+		String[] sAry = query.split(" ");
+		// コマンド処理
+		if (sAry.length == 1) {
+			if ("end".equals(sAry[0]))
+				return "";
+			shortcut(sAry[0]);
+			return "";
+		}
+		if (sAry.length >= 3) {
+			results = proc(sAry[0], sAry[1], sAry[2]);
+			for (int i = 1; i < (sAry.length + 1) / 4; i++) {
+				nextSearch(sAry[4 * i - 1], sAry[4 * i], sAry[4 * i + 1],
+						sAry[4 * i + 2]);
+			}
+		}
+		return returnResults();
+	}
+	
+	// JUnit用インターフェイス
+	public String returnResults() {
+		// 真偽チェックでOR検索した場合
+		if (results.size() >= 2
+				&& ("False".equals(results.get(0)) || "True".equals(results
+						.get(0)))) {
+			String flg = "False";
+			for (String result : results) {
+				if ("True".equals(result))
+					flg = "True";
+			}
+			return flg;
+		} else if (results.size() == 0) {
+			return "False";
+		} else {
+			String result = "";
+			for (String r : results) {
+				result += " AND " + r;
+			}
+			return result.substring(5, result.length());
 		}
 	}
 
@@ -180,17 +224,17 @@ public class Network {
 	// 初期化
 	public void setUp() {
 		Link l;
-		l = new Link("S.Jobs", "is-a", "Former Apple CEO");
+		l = new Link("S.Jobs", "is-a", "Former_Apple_CEO");
 		network.add(l);
-		l = new Link("S.Jobs", "likes", "The Beatles");
+		l = new Link("S.Jobs", "likes", "The_Beatles");
 		network.add(l);
-		l = new Link("S.Jobs", "is-a", "Apple's Founder");
+		l = new Link("S.Jobs", "is-a", "Apple's_Founder");
 		network.add(l);
-		l = new Link("Apple's Founder", "is-a", "Genius");
+		l = new Link("Apple's_Founder", "is-a", "Genius");
 		network.add(l);
-		l = new Link("S.Wozniak", "is-a", "Apple's Founder");
+		l = new Link("S.Wozniak", "is-a", "Apple's_Founder");
 		network.add(l);
-		l = new Link("S.Wozniak", "has-a", "Doctor of Science");
+		l = new Link("S.Wozniak", "has-a", "Doctor_of_Science");
 		network.add(l);
 	}
 }
