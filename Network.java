@@ -11,8 +11,7 @@ public class Network{
 			//コマンド入力
 			System.out.println("");
 			BufferedReader r = new BufferedReader(new InputStreamReader(System.in), 1);
-			String s = r.readLine();
-			String[] sAry = s.split(",");
+			String[] sAry = r.readLine().split(",");
 			//コマンド処理
 			if(sAry.length==1){
 				if("end".equals(sAry[0])) break;
@@ -32,7 +31,7 @@ public class Network{
 	//ショートカットコマンド
 	public void shortcut(String command){
 		if("show".equals(command)) showLink();
-		if("setInit".equals(command)) setInit();
+		if("setUp".equals(command)) setUp();
 	}
 	
 	//2つめ以降のクエリ
@@ -158,13 +157,15 @@ public class Network{
 		}
 	}
 	
+	//現在作られているリンクの表示
 	public void showLink(){
 		for(Link link : network){
 			System.out.println(link.getSubject()+" : "+link.getRelationship()+" : "+link.getObject());
 		}
 	}
 	
-	public void setInit(){
+	//初期化
+	public void setUp(){
 		Link l;
 		l= new Link("S.Jobs", "is-a", "Former Apple CEO");
 		network.add(l);
