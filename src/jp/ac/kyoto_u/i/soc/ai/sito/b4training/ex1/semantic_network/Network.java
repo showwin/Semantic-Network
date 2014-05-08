@@ -4,19 +4,35 @@ import java.io.*;
 import java.util.*;
 
 public class Network {
+	private static final String WHITE_SPACE = " ";
+	private static final String STRING_SUCCESS = "Success!";
+	private static final String STRING_QUESTION = "?";
+	private static final String STRING_WHAT = "?x";
+	private static final String STRING_SMALL_OR = "or";
+	private static final String STRING_BIG_OR = "OR";
+	private static final String STRING_SMALL_AND = "and";
+	private static final String STRING_BIG_AND = "AND";
+	private static final String STRING_SETUP = "setUp";
+	private static final String STRING_SHOW = "show";
+	private static final String STRING_TRUE = "True";
+	private static final String STRING_FALSE = "False";
+	private static final String STRING_END = "end";
 	List<Link> network = new ArrayList<Link>();
 	List<String> results = new ArrayList<String>();
-
+	
+	/**
+	 * コマンドを受け取ってネットワークに作用させるメインメソッドです。
+	 * @throws IOException
+	 */
 	public void start() throws IOException {
 		while (true) {
 			// コマンド入力
 			System.out.println("");
-			BufferedReader r = new BufferedReader(new InputStreamReader(
-					System.in), 1);
-			String[] sAry = r.readLine().split(" ");
+			BufferedReader r = new BufferedReader(new InputStreamReader(System.in), 1);
+			String[] sAry = r.readLine().split(WHITE_SPACE);
 			// コマンド処理
 			if (sAry.length == 1) {
-				if ("end".equals(sAry[0]))
+				if (STRING_END.equals(sAry[0]))
 					break;
 				shortcut(sAry[0]);
 				continue;
@@ -24,21 +40,25 @@ public class Network {
 			if (sAry.length >= 3) {
 				results = proc(sAry[0], sAry[1], sAry[2]);
 				for (int i = 1; i < (sAry.length + 1) / 4; i++) {
-					nextSearch(sAry[4 * i - 1], sAry[4 * i], sAry[4 * i + 1],
-							sAry[4 * i + 2]);
+					nextSearch(sAry[4 * i - 1], sAry[4 * i], sAry[4 * i + 1], sAry[4 * i + 2]);
 				}
 			}
 			showResults();
 		}
 	}
 	
-	// JUnit用インターフェイス
+	/**
+	 * JUnitでテストするようのインターフェイスです。
+	 * 中身はstartメソッドと変わりません。
+	 * @param query
+	 * @return クエリの結果
+	 */
 	public String ask(String query){
 		// コマンド入力
-		String[] sAry = query.split(" ");
+		String[] sAry = query.split(WHITE_SPACE);
 		// コマンド処理
 		if (sAry.length == 1) {
-			if ("end".equals(sAry[0]))
+			if (STRING_END.equals(sAry[0]))
 				return "";
 			shortcut(sAry[0]);
 			return "";
@@ -46,27 +66,26 @@ public class Network {
 		if (sAry.length >= 3) {
 			results = proc(sAry[0], sAry[1], sAry[2]);
 			for (int i = 1; i < (sAry.length + 1) / 4; i++) {
-				nextSearch(sAry[4 * i - 1], sAry[4 * i], sAry[4 * i + 1],
-						sAry[4 * i + 2]);
+				nextSearch(sAry[4 * i - 1], sAry[4 * i], sAry[4 * i + 1], sAry[4 * i + 2]);
 			}
 		}
 		return returnResults();
 	}
 	
-	// JUnit用インターフェイス
-	public String returnResults() {
+	// JUnit用インターフェイス(表示のための結果整形)
+	private String returnResults() {
 		// 真偽チェックでOR検索した場合
 		if (results.size() >= 2
-				&& ("False".equals(results.get(0)) || "True".equals(results
+				&& (STRING_FALSE.equals(results.get(0)) || STRING_TRUE.equals(results
 						.get(0)))) {
-			String flg = "False";
+			String flg = STRING_FALSE;
 			for (String result : results) {
-				if ("True".equals(result))
-					flg = "True";
+				if (STRING_TRUE.equals(result))
+					flg = STRING_TRUE;
 			}
 			return flg;
 		} else if (results.size() == 0) {
-			return "False";
+			return STRING_FALSE;
 		} else {
 			String result = "";
 			for (String r : results) {
@@ -77,24 +96,24 @@ public class Network {
 	}
 
 	// ショートカットコマンド
-	public void shortcut(String command) {
-		if ("show".equals(command))
+	private void shortcut(String command) {
+		if (STRING_SHOW.equals(command))
 			showLink();
-		if ("setUp".equals(command))
+		if (STRING_SETUP.equals(command))
 			setUp();
 	}
 
-	// 2つめ以降のクエリ
-	public void nextSearch(String cond, String s, String r, String o) {
-		if ("AND".equals(cond) || "and".equals("cond")) {
+	// 2つめ以降のクエリ処理
+	private void nextSearch(String cond, String s, String r, String o) {
+		if (STRING_BIG_AND.equals(cond) || STRING_SMALL_AND.equals("cond")) {
 			andSearch(s, r, o);
-		} else if ("OR".equals(cond) || "or".equals(cond)) {
+		} else if (STRING_BIG_OR.equals(cond) || STRING_SMALL_OR.equals(cond)) {
 			orSearch(s, r, o);
 		}
 	}
 
 	// and検索
-	public void andSearch(String s, String r, String o) {
+	private void andSearch(String s, String r, String o) {
 		List<String> answers = new ArrayList<String>();
 		List<String> temp = new ArrayList<String>();
 		answers = proc(s, r, o);
@@ -108,7 +127,7 @@ public class Network {
 	}
 
 	// or検索
-	public void orSearch(String s, String r, String o) {
+	private void orSearch(String s, String r, String o) {
 		List<String> answers = new ArrayList<String>();
 		answers = proc(s, r, o);
 		for (String answer : answers) {
@@ -117,13 +136,13 @@ public class Network {
 
 	}
 
-	// コマンドによる仕事の割り当て
-	public List<String> proc(String s, String r, String o) {
-		if (o.endsWith("?")) {
+	// コマンドによる検索/リンク作成の割り当て
+	private List<String> proc(String s, String r, String o) {
+		if (o.endsWith(STRING_QUESTION)) {
 			return tfCheck(s, r, o.substring(0, o.length() - 1));
-		} else if ("?x".equals(s)) {
+		} else if (STRING_WHAT.equals(s)) {
 			return sSearch(r, o);
-		} else if ("?x".equals(o)) {
+		} else if (STRING_WHAT.equals(o)) {
 			return oSearch(s, r);
 		} else {
 			return makeLink(s, r, o);
@@ -131,16 +150,16 @@ public class Network {
 	}
 
 	// リンク作成
-	public List<String> makeLink(String s, String r, String o) {
+	private List<String> makeLink(String s, String r, String o) {
 		List<String> message = new ArrayList<String>();
 		Link l = new Link(s, r, o);
 		network.add(l);
-		message.add("Success!");
+		message.add(STRING_SUCCESS);
 		return message;
 	}
 
 	// 主語検索
-	public List<String> sSearch(String r, String o) {
+	private List<String> sSearch(String r, String o) {
 		List<String> answers = new ArrayList<String>();
 		List<String> deepAnswers = new ArrayList<String>();
 		for (Link link : network) {
@@ -157,7 +176,7 @@ public class Network {
 	}
 
 	// 述語検索
-	public List<String> oSearch(String s, String r) {
+	private List<String> oSearch(String s, String r) {
 		List<String> answers = new ArrayList<String>();
 		List<String> deepAnswers = new ArrayList<String>();
 		for (Link link : network) {
@@ -173,8 +192,8 @@ public class Network {
 		return answers;
 	}
 
-	// 真偽チェック
-	public List<String> tfCheck(String s, String r, String o) {
+	// 真偽検索
+	private List<String> tfCheck(String s, String r, String o) {
 		List<String> answers = new ArrayList<String>();
 		boolean flg = false;
 		List<String> candidates = oSearch(s, r);
@@ -183,27 +202,28 @@ public class Network {
 				flg = true;
 		}
 		if (flg) {
-			answers.add("True");
+			answers.add(STRING_TRUE);
 		} else {
-			answers.add("False");
+			answers.add(STRING_FALSE);
 		}
 		return answers;
 	}
 
-	// 結果の表示
-	public void showResults() {
-		// 真偽チェックでOR検索した場合
+	// 結果表示のための整形
+	private void showResults() {
+		// 真偽検索でOR検索した場合
 		if (results.size() >= 2
-				&& ("False".equals(results.get(0)) || "True".equals(results
-						.get(0)))) {
-			String flg = "False";
+				&& (STRING_FALSE.equals(results.get(0)) || STRING_TRUE.equals(results.get(0)))) {
+			String flg = STRING_FALSE;
 			for (String result : results) {
-				if ("True".equals(result))
-					flg = "True";
+				if (STRING_TRUE.equals(result))
+					flg = STRING_TRUE;
 			}
 			System.out.println(flg);
+		// 結果なしの場合 & 真偽検索でFalseの場合
 		} else if (results.size() == 0) {
-			System.out.println("False");
+			System.out.println(STRING_FALSE);
+		// それ以外
 		} else {
 			String result = "";
 			for (String r : results) {
@@ -214,7 +234,7 @@ public class Network {
 	}
 
 	// 現在作られているリンクの表示
-	public void showLink() {
+	private void showLink() {
 		for (Link link : network) {
 			System.out.println(link.getSubject() + " : "
 					+ link.getRelationship() + " : " + link.getObject());

@@ -15,26 +15,38 @@ public class NetworkTest {
 
 	@Test
 	public void testMakeLink() {
-		String result = network.ask("S.Jobs is-a Former_Apple_CEO");
+		String result = network.ask("S.Jobs is-a crazy_man");
 		assertEquals("Success!", result);
 	}
 	
 	@Test
-	public void testSearchWhat() {
+	public void testWhatSearch() {
 		String result = network.ask("?x is-a Apple's_Founder");
 		assertEquals("S.Jobs AND S.Wozniak", result);
 	}
 	
 	@Test
-	public void testTFSearch() {
+	public void testTFSearch1() {
 		String result = network.ask("Jack is-a Apple's_Founder?");
 		assertEquals("False", result);
 	}
 	
 	@Test
-	public void testAndSearch(){
+	public void testTFSearch2() {
+		String result = network.ask("S.Wozniak is-a Apple's_Founder?");
+		assertEquals("True", result);
+	}
+	
+	@Test
+	public void testAndSearch1(){
 		String result = network.ask("S.Jobs is-a Apple's_Founder? AND S.Jobs is-a MicroSoft's_Founder?");
 		assertEquals("False", result);
+	}
+	
+	@Test
+	public void testAndSearch2(){
+		String result = network.ask("?x is-a Apple's_Founder AND ?x likes The_Beatles");
+		assertEquals("S.Jobs", result);
 	}
 	
 	@Test
