@@ -30,13 +30,14 @@ public class Network {
 			System.out.println("");
 			BufferedReader r = new BufferedReader(new InputStreamReader(System.in), 1);
 			String[] sAry = r.readLine().split(WHITE_SPACE);
-			// コマンド処理
+			// ショートカットコマンド処理
 			if (sAry.length == 1) {
 				if (STRING_END.equals(sAry[0]))
 					break;
 				shortcut(sAry[0]);
 				continue;
 			}
+			// ショートカットでない場合の処理
 			if (sAry.length >= 3) {
 				results = proc(sAry[0], sAry[1], sAry[2]);
 				for (int i = 1; i < (sAry.length + 1) / 4; i++) {
@@ -54,15 +55,15 @@ public class Network {
 	 * @return クエリの結果
 	 */
 	public String ask(String query){
-		// コマンド入力
 		String[] sAry = query.split(WHITE_SPACE);
-		// コマンド処理
+		// ショートカットコマンド処理
 		if (sAry.length == 1) {
 			if (STRING_END.equals(sAry[0]))
 				return "";
 			shortcut(sAry[0]);
 			return "";
 		}
+		// ショートカットでない場合の処理
 		if (sAry.length >= 3) {
 			results = proc(sAry[0], sAry[1], sAry[2]);
 			for (int i = 1; i < (sAry.length + 1) / 4; i++) {
@@ -84,8 +85,10 @@ public class Network {
 					flg = STRING_TRUE;
 			}
 			return flg;
+		// 結果なしの場合 & 真偽検索でFalseの場合
 		} else if (results.size() == 0) {
 			return STRING_FALSE;
+		// それ以外
 		} else {
 			String result = "";
 			for (String r : results) {

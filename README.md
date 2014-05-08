@@ -3,7 +3,18 @@ Semantic-Network
 
 This is a making/searching semantic network system with Java.
 
+--------------------------------
+
 ## How to use
+#### Start Program
+
+    javac Main.java
+    java Main
+    
+After that, you can use following commands at command line.
+
+--------------------------------
+
 #### Setup
 
     setUp
@@ -16,6 +27,7 @@ This will make following links:
 [S.Wozniak]--[is-a]--[Apple's_Founder]  
 [S.Wozniak]--[has-a]--[Doctor_of_Science]  
 
+
 #### Display network(all links)
 
     show
@@ -25,9 +37,10 @@ This command display network.
 
 #### Make link
 
-    S.jobs is-a Apple's_Founder
+    S.Jobs is-a Apple's_Founder
     
 This command make a link which is [S.Jobs]--[is-a]--[Apple's Founder].
+
 
 #### "what" search
 
@@ -36,6 +49,7 @@ This command make a link which is [S.Jobs]--[is-a]--[Apple's Founder].
 This command means "Who is a Apple's Founder".  
 In this case, `S.Jobs` is returned.  
 `?x` means like "What" and "Who" etc. 
+
 
 #### True/False search
 
@@ -65,6 +79,7 @@ So,
     S.Wozniak is-a ?x
 
 This returns `Apple's_Founder AND Genius`.
+
 
 #### Finish
 

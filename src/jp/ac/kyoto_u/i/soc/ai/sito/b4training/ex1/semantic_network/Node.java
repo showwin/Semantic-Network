@@ -1,14 +1,14 @@
 package jp.ac.kyoto_u.i.soc.ai.sito.b4training.ex1.semantic_network;
 
 public class Node {
-	private String node;
+	private String name;
 	
 	/**
 	 * ノードを作成時に値を設定するコンストラクタです。
 	 * @param name ノードの名前
 	 */
 	Node(String name) {
-		this.node = name;
+		this.name = name;
 	}
 	
 	/**
@@ -16,6 +16,6 @@ public class Node {
 	 * @return ノードの名前
 	 */
 	public String getValue() {
-		return this.node;
+		return this.name;
 	}
 }

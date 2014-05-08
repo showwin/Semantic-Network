@@ -38,7 +38,13 @@ public class NetworkTest {
 	}
 	
 	@Test
-	public void testAndSearch1(){
+	public void testAndSearchTrue(){
+		String result = network.ask("S.Jobs is-a Apple's_Founder? AND S.Jobs likes The_Beatles?");
+		assertEquals("True", result);
+	}
+	
+	@Test
+	public void testAndSearchFalse(){
 		String result = network.ask("S.Jobs is-a Apple's_Founder? AND S.Jobs is-a MicroSoft's_Founder?");
 		assertEquals("False", result);
 	}
@@ -50,9 +56,15 @@ public class NetworkTest {
 	}
 	
 	@Test
-	public void testOrSearch(){
+	public void testOrSearchTrue(){
 		String result = network.ask("S.Jobs is-a Apple's_Founder? OR S.Jobs is-a MicroSoft's_Founder?");
 		assertEquals("True", result);
+	}
+	
+	@Test
+	public void testOrSearchFalse(){
+		String result = network.ask("S.Jhon is-a Apple's_Founder? OR S.Jobs is-a MicroSoft's_Founder?");
+		assertEquals("False", result);
 	}
 	
 	@Test
@@ -65,6 +77,12 @@ public class NetworkTest {
 	public void testDeepSearch2(){
 		String result = network.ask("S.Jobs is-a Genius?");
 		assertEquals("True", result);
+	}
+	
+	@Test
+	public void testEnd(){
+		String result = network.ask("end");
+		assertEquals("", result);
 	}
 
 }
